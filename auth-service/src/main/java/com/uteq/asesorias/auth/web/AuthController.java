@@ -37,7 +37,8 @@ public class AuthController {
         Map user;
         try {
             RestTemplate rt = new RestTemplate();
-            String url = "http://localhost:8082/users/by-email?email=" + req.getEmail();
+            // Consultar vía API Gateway para evitar puertos directos y CORS inconsistentes
+            String url = "http://localhost:8080/users/by-email?email=" + req.getEmail();
             var resp = rt.getForEntity(url, Map.class);
             if (!resp.getStatusCode().is2xxSuccessful() || resp.getBody() == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Usuario no encontrado"));
@@ -50,9 +51,15 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Fallo al consultar user-service", "message", ex.getMessage()));
         }
 
-        // Validación básica de contraseña temporal
-        boolean valid = "password".equals(req.getPassword());
-        if (!valid) {
+        // Validar contra contraseña almacenada en user-service
+        String storedPassword = String.valueOf(user.getOrDefault("password", "password"));
+        if (storedPassword == null) storedPassword = "password";
+        storedPassword = storedPassword.trim();
+        boolean mustChange = Boolean.parseBoolean(String.valueOf(user.getOrDefault("mustChangePassword", "false")));
+        String reqPass = req.getPassword() != null ? req.getPassword().trim() : "";
+        // Validación estricta: solo la contraseña almacenada es válida
+        boolean passwordOk = storedPassword.equals(reqPass);
+        if (!passwordOk) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Credenciales incorrectas"));
         }
 
@@ -64,6 +71,7 @@ public class AuthController {
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusSeconds(3600)))
                 .claim("roles", new String[]{role})
+                .claim("mustChangePassword", mustChange)
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                 .compact();
             return ResponseEntity.ok(new TokenResponse(token));

@@ -26,6 +26,11 @@ public class User {
     private Long divisionId;
     private Long programaId;
 
+    @Column(nullable = false)
+    private String password = "password"; // contraseña inicial temporal
+
+    private boolean mustChangePassword = true; // exige cambio después del primer login
+
     // getters & setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -41,4 +46,9 @@ public class User {
     public void setDivisionId(Long divisionId) { this.divisionId = divisionId; }
     public Long getProgramaId() { return programaId; }
     public void setProgramaId(Long programaId) { this.programaId = programaId; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public boolean isMustChangePassword() { return mustChangePassword; }
+    public void setMustChangePassword(boolean mustChangePassword) { this.mustChangePassword = mustChangePassword; }
 }

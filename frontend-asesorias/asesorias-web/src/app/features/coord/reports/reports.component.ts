@@ -147,11 +147,14 @@ export class ReportsComponent implements OnInit {
     });
   }
 
+  divisionChartData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [] };
+  programaChartData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [] };
   loadAll() {
     this.loadEstado();
     this.loadProfesor();
     this.loadAlumno();
     this.reloadUsers();
+    this.loadDivisionProgramaBreakdown();
   }
 
   reloadUsers() {
@@ -189,5 +192,37 @@ export class ReportsComponent implements OnInit {
       { label: 'Profesores activos', value: profesoresUnicos, icon: 'co_present', color: 'kpi-indigo' },
       { label: 'Alumnos atendidos', value: alumnosUnicos, icon: 'groups', color: 'kpi-orange' }
     ]);
+  }
+
+  private loadDivisionProgramaBreakdown() {
+    // Using users list: count profesores per division and alumnos per programa
+    this.http.get<any[]>(`${environment.apiBase}/users`).subscribe(list => {
+      const users = (list || []);
+      const byDivision = new Map<number, number>();
+      const byPrograma = new Map<number, number>();
+      const divisionLabels = new Map<number, string>();
+      const programaLabels = new Map<number, string>();
+      users.forEach(u => {
+        if (u.rol === 'PROFESOR' && u.divisionId) {
+          byDivision.set(u.divisionId, (byDivision.get(u.divisionId) || 0) + 1);
+        }
+        if (u.rol === 'ALUMNO' && u.programaId) {
+          byPrograma.set(u.programaId, (byPrograma.get(u.programaId) || 0) + 1);
+        }
+      });
+      // Fetch labels
+      this.http.get<any[]>(`${environment.apiBase}/catalog/divisiones`).subscribe(divs => {
+        (divs||[]).forEach(d => divisionLabels.set(d.id, d.nombre));
+        const ids = Array.from(byDivision.keys());
+        this.divisionChartData.labels = ids.map(id => divisionLabels.get(id) || ('División ' + id));
+        this.divisionChartData.datasets = [{ label: 'Profesores por división', data: ids.map(id => byDivision.get(id) || 0), backgroundColor: '#90CAF9' }];
+      });
+      this.http.get<any[]>(`${environment.apiBase}/catalog/programas`).subscribe(progs => {
+        (progs||[]).forEach(p => programaLabels.set(p.id, p.nombre));
+        const ids = Array.from(byPrograma.keys());
+        this.programaChartData.labels = ids.map(id => programaLabels.get(id) || ('Programa ' + id));
+        this.programaChartData.datasets = [{ label: 'Alumnos por programa', data: ids.map(id => byPrograma.get(id) || 0), backgroundColor: '#A5D6A7' }];
+      });
+    });
   }
 }

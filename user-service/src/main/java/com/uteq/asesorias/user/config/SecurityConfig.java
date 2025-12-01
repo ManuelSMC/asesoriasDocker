@@ -42,6 +42,14 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/users/*").hasAnyAuthority("PROFESOR", "ADMINISTRADOR", "COORDINADOR")
             .requestMatchers(HttpMethod.GET, "/users/by-id").hasAnyAuthority("PROFESOR", "ADMINISTRADOR", "COORDINADOR")
             .requestMatchers(HttpMethod.POST, "/users").hasAnyAuthority("ADMINISTRADOR")
+            .requestMatchers(HttpMethod.PATCH, "/users/*").hasAnyAuthority("ADMINISTRADOR")
+            // Catalogs: allow GET to all authenticated; POST only ADMIN
+            .requestMatchers(HttpMethod.GET, "/catalog/**").authenticated()
+            .requestMatchers(HttpMethod.POST, "/catalog/**").hasAnyAuthority("ADMINISTRADOR")
+            .requestMatchers(HttpMethod.PATCH, "/catalog/**").hasAnyAuthority("ADMINISTRADOR")
+            // Materias assignment per profesor
+            .requestMatchers(HttpMethod.GET, "/profesores/*/materias").hasAnyAuthority("ADMINISTRADOR", "COORDINADOR")
+            .requestMatchers(HttpMethod.POST, "/profesores/*/materias").hasAnyAuthority("ADMINISTRADOR")
             .anyRequest().authenticated()
         );
         http.addFilterBefore(new JwtFilter(secret), UsernamePasswordAuthenticationFilter.class);
