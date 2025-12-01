@@ -1,0 +1,9 @@
+com\uteq\asesorias\advisory\domain\Advisory.class
+com\uteq\asesorias\advisory\web\AdvisoryController.class
+com\uteq\asesorias\advisory\domain\Advisory$Estado.class
+com\uteq\asesorias\advisory\repo\AdvisoryRepository.class
+com\uteq\asesorias\advisory\domain\AdvisoryRegistration.class
+com\uteq\asesorias\advisory\repo\AdvisoryRegistrationRepository.class
+com\uteq\asesorias\advisory\AdvisoryServiceApplication.class
+com\uteq\asesorias\advisory\config\SecurityConfig$JwtFilter.class
+com\uteq\asesorias\advisory\config\SecurityConfig.class

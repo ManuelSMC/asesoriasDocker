@@ -1,0 +1,5 @@
+com\uteq\asesorias\auth\config\SecurityConfig.class
+com\uteq\asesorias\auth\web\dto\LoginRequest.class
+com\uteq\asesorias\auth\AuthServiceApplication.class
+com\uteq\asesorias\auth\web\AuthController.class
+com\uteq\asesorias\auth\web\dto\TokenResponse.class

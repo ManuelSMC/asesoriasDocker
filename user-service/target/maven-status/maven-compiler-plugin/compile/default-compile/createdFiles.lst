@@ -1,0 +1,6 @@
+com\uteq\asesorias\user\repo\UserRepository.class
+com\uteq\asesorias\user\UserServiceApplication.class
+com\uteq\asesorias\user\web\UserController.class
+com\uteq\asesorias\user\domain\User.class
+com\uteq\asesorias\user\config\SecurityConfig$JwtFilter.class
+com\uteq\asesorias\user\config\SecurityConfig.class
