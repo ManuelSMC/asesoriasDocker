@@ -1,0 +1,9 @@
+com\uteq\asesorias\config\FeignAuthConfig.class
+com\uteq\asesorias\domain\Profesor.class
+com\uteq\asesorias\ProfesorController.class
+com\uteq\asesorias\config\FeignAuthConfig$1.class
+com\uteq\asesorias\ProfesorServiceApplication.class
+com\uteq\asesorias\config\SecurityConfig$JwtFilter.class
+com\uteq\asesorias\client\MateriaClient.class
+com\uteq\asesorias\config\SecurityConfig.class
+com\uteq\asesorias\repo\ProfesorRepository.class

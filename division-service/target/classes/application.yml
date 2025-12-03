@@ -1,0 +1,23 @@
+server:
+  port: 8087
+spring:
+  application:
+    name: division-service
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/asesorias_division?createDatabaseIfNotExist=true&serverTimezone=UTC}
+    username: ${DB_USER:root}
+    password: ${DB_PASS:Hola.123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

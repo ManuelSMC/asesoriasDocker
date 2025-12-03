@@ -7,11 +7,14 @@ Sistema para gestionar asesorías académicas entre Alumnos y Profesores, con fu
 1. eureka-server (Registro de servicios)
 2. api-gateway (Entrada única, routing, filtros de seguridad)
 3. auth-service (Login, emisión y validación de JWT, dominio @uteq.edu.mx)
-4. user-service (Usuarios, roles, divisiones, programas educativos)
-5. advisory-service (Asesorías: solicitudes, programación, edición, cancelación, historial, filtros)
-6. notification-service (Eventos y notificaciones: recordatorios, confirmaciones) [stub inicial]
-7. reporting-service (Estadísticas y exportación PDF para Coordinador) [stub inicial]
-8. angular-frontend (UI para todos los perfiles)
+4. advisory-service (Asesorías)
+5. user-service (Usuarios y roles)
+6. materia-service (Materias)
+7. division-service (Divisiones)
+8. profesor-service (Profesores)
+9. programa-service (Programas educativos)
+10. notificacion-service (Notificaciones)
+11. angular-frontend (UI)
 
 ## Roles y Capacidades
 - ALUMNO: Solicitar asesorías, ver pendientes, historial, filtrar asesorías y profesores.
@@ -23,10 +26,13 @@ Sistema para gestionar asesorías académicas entre Alumnos y Profesores, con fu
 - eureka-server: 8761
 - api-gateway: 8080
 - auth-service: 8081
-- user-service: 8082
-- advisory-service: 8083
-- notification-service: 8084
-- reporting-service: 8085
+- advisory-service: 8081
+- user-service: 8080
+- materia-service: 8082
+- division-service: 8083
+- profesor-service: 8084
+- programa-service: 8085
+- notificacion-service: 8086
 - angular-frontend: 4200
 
 ## Flujo de Autenticación
@@ -42,8 +48,8 @@ Sistema para gestionar asesorías académicas entre Alumnos y Profesores, con fu
 - Cada servicio administra su propio esquema (principio de autonomía). Para prototipo inicial se pueden compartir una instancia con múltiples schemas.
 
 ## Comunicación Inter-Servicios
-- Síncrona vía REST a través del gateway o directa (feign) registrado en Eureka.
-- Futuro: Asíncrona (RabbitMQ / Kafka) para notificaciones y eventos (aceptación asesoría, recordatorios).
+- Síncrona directa con Spring Cloud OpenFeign, servicios registrados en Eureka.
+- Futuro: Asíncrona (RabbitMQ / Kafka) para notificaciones y eventos.
 
 ## Entidades Principales (borrador)
 User(id, nombre, email, rol, activo, division_id?, programa_id?)

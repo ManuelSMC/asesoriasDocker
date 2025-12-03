@@ -26,6 +26,11 @@ eureka:
       defaultZone: "http://localhost:8761/eureka/"
     register-with-eureka: true
     fetch-registry: true
+feign:
+  httpclient:
+    enabled: true
+  okhttp:
+    enabled: false
 
 ---
 spring:

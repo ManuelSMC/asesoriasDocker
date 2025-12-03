@@ -1,0 +1,8 @@
+com\uteq\asesorias\config\FeignAuthConfig.class
+com\uteq\asesorias\DivisionServiceApplication.class
+com\uteq\asesorias\DivisionController.class
+com\uteq\asesorias\config\FeignAuthConfig$1.class
+com\uteq\asesorias\config\SecurityConfig$JwtFilter.class
+com\uteq\asesorias\domain\Division.class
+com\uteq\asesorias\config\SecurityConfig.class
+com\uteq\asesorias\repo\DivisionRepository.class

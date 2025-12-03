@@ -1,0 +1,8 @@
+com\uteq\asesorias\config\FeignAuthConfig.class
+com\uteq\asesorias\domain\Notificacion.class
+com\uteq\asesorias\config\FeignAuthConfig$1.class
+com\uteq\asesorias\NotificacionController.class
+com\uteq\asesorias\repo\NotificacionRepository.class
+com\uteq\asesorias\config\SecurityConfig$JwtFilter.class
+com\uteq\asesorias\config\SecurityConfig.class
+com\uteq\asesorias\NotificacionServiceApplication.class

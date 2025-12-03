@@ -155,6 +155,12 @@ import { EditUserDialogComponent } from './edit-user.dialog';
                 <mat-label>Nuevo programa</mat-label>
                 <input matInput [(ngModel)]="nuevoPrograma">
               </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>División</mat-label>
+                <mat-select [(ngModel)]="selectedDivisionForPrograma">
+                  <mat-option *ngFor="let d of divisiones()" [value]="d.id">{{d.nombre}}</mat-option>
+                </mat-select>
+              </mat-form-field>
               <button mat-flat-button color="primary" (click)="crearPrograma()">Agregar</button>
             </div>
             <div class="grid-auto sp-sm">
@@ -236,6 +242,7 @@ export class UsersComponent implements OnInit {
   nuevoPrograma = '';
   nuevaMateria = '';
   selectedMaterias: number[] = [];
+  selectedDivisionForPrograma: number | null = null;
   editDivision: any = null;
   editPrograma: any = null;
   editMateria: any = null;
@@ -300,7 +307,12 @@ export class UsersComponent implements OnInit {
           this.loadAll();
         };
         if (payload.rol === 'PROFESOR' && this.selectedMaterias.length > 0) {
-          const proceed = (profId: number) => this.http.post(`${environment.apiBase}/profesores/${profId}/materias`, this.selectedMaterias).subscribe(() => onDone(), () => onDone());
+          const proceed = (profId: number) => {
+            // Asignar materias existentes al profesor actualizando su profesorId
+            const ops = this.selectedMaterias.map(id => this.http.patch(`${environment.apiBase}/catalog/materias/${id}`, { profesorId: profId }));
+            // Ejecutar todas y finalizar sin bloquear por errores individuales
+            Promise.all(ops.map(o => o.toPromise().catch(() => null))).then(() => onDone());
+          };
           if (created && created.id) {
             proceed(created.id);
           } else {
@@ -338,8 +350,10 @@ export class UsersComponent implements OnInit {
 
   crearPrograma() {
     const nombre = this.nuevoPrograma.trim(); if (!nombre) return;
-    this.http.post(`${environment.apiBase}/catalog/programas`, { nombre }).subscribe(() => {
+    if (!this.selectedDivisionForPrograma) { this.snack.open('Seleccione la división del programa', 'OK', { duration: 2500 }); return; }
+    this.http.post(`${environment.apiBase}/catalog/programas`, { nombre, divisionId: this.selectedDivisionForPrograma }).subscribe(() => {
       this.nuevoPrograma = '';
+      this.selectedDivisionForPrograma = null;
       this.loadCatalogs();
       this.snack.open('Programa creado', 'OK', { duration: 2000 });
     });

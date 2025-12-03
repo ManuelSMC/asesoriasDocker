@@ -2,45 +2,102 @@ server:
   port: 8080
 
 spring:
-  application:
-    name: api-gateway
   cloud:
     gateway:
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "http://localhost:4200"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-            allowCredentials: true
       discovery:
         locator:
           enabled: true
-          lower-case-service-id: true
       routes:
-        # Ejemplos de rutas (se activarán cuando existan servicios):
         - id: auth-service
           uri: lb://auth-service
           predicates:
             - Path=/auth/**
+        # Catalog-prefixed routes for frontend
+        - id: catalog-division-service-wildcard
+          uri: lb://division-service
+          predicates:
+            - Path=/catalog/divisiones/**
+          filters:
+            - StripPrefix=1
+        - id: catalog-division-service-base
+          uri: lb://division-service
+          predicates:
+            - Path=/catalog/divisiones
+          filters:
+            - StripPrefix=1
+        - id: catalog-programa-service-wildcard
+          uri: lb://programa-service
+          predicates:
+            - Path=/catalog/programas/**
+          filters:
+            - StripPrefix=1
+        - id: catalog-programa-service-base
+          uri: lb://programa-service
+          predicates:
+            - Path=/catalog/programas
+          filters:
+            - StripPrefix=1
+        - id: catalog-materia-service-wildcard
+          uri: lb://materia-service
+          predicates:
+            - Path=/catalog/materias/**
+          filters:
+            - StripPrefix=1
+        - id: catalog-materia-service-base
+          uri: lb://materia-service
+          predicates:
+            - Path=/catalog/materias
+          filters:
+            - StripPrefix=1
         - id: user-service
           uri: lb://user-service
           predicates:
             - Path=/users/**
-        - id: user-service-catalog
-          uri: lb://user-service
-          predicates:
-            - Path=/catalog/**
-        - id: user-service-profesores
-          uri: lb://user-service
-          predicates:
-            - Path=/profesores/**
         - id: advisory-service
           uri: lb://advisory-service
           predicates:
             - Path=/advisories/**
+        - id: materia-service
+          uri: lb://materia-service
+          predicates:
+            - Path=/materias/**
+        - id: division-service
+          uri: lb://division-service
+          predicates:
+            - Path=/divisiones/**
+        - id: profesor-service
+          uri: lb://profesor-service
+          predicates:
+            - Path=/profesores/**
+        - id: programa-service
+          uri: lb://programa-service
+          predicates:
+            - Path=/programas/**
+        - id: notificacion-service
+          uri: lb://notificacion-service
+          predicates:
+            - Path=/notificaciones/**
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders:
+              - Authorization
+              - Content-Type
+              - X-Requested-With
+            exposedHeaders:
+              - Authorization
+            allowCredentials: true
 
 eureka:
   client:

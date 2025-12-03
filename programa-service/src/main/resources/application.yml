@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: programa-service
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/asesorias_programa?createDatabaseIfNotExist=true&serverTimezone=UTC}
+    username: "root"
+    password: "Hola.123"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+server:
+  port: 8085
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

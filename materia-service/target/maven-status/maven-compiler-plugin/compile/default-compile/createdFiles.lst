@@ -1,0 +1,8 @@
+com\uteq\asesorias\config\FeignAuthConfig.class
+com\uteq\asesorias\MateriaServiceApplication.class
+com\uteq\asesorias\config\FeignAuthConfig$1.class
+com\uteq\asesorias\repo\MateriaRepository.class
+com\uteq\asesorias\domain\Materia.class
+com\uteq\asesorias\MateriaController.class
+com\uteq\asesorias\config\SecurityConfig$JwtFilter.class
+com\uteq\asesorias\config\SecurityConfig.class

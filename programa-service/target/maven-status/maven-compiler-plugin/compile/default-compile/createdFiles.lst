@@ -1,0 +1,8 @@
+com\uteq\asesorias\domain\Programa.class
+com\uteq\asesorias\config\FeignAuthConfig.class
+com\uteq\asesorias\ProgramaController.class
+com\uteq\asesorias\config\FeignAuthConfig$1.class
+com\uteq\asesorias\config\SecurityConfig$JwtFilter.class
+com\uteq\asesorias\repo\ProgramaRepository.class
+com\uteq\asesorias\ProgramaServiceApplication.class
+com\uteq\asesorias\config\SecurityConfig.class
