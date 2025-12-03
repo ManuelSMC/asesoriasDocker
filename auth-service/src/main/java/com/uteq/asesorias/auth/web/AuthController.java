@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,9 @@ public class AuthController {
             "dev-secret-please-change-32-bytes-minimum-please-ensure-length-64"
         );
 
+    @Value("${api.gateway.base:http://api-gateway:8080}")
+    private String apiGatewayBase;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
         System.out.println("/auth/login payload: email=" + req.getEmail());
@@ -37,8 +41,9 @@ public class AuthController {
         Map user;
         try {
             RestTemplate rt = new RestTemplate();
-            // Consultar vía API Gateway para evitar puertos directos y CORS inconsistentes
-            String url = "http://localhost:8080/users/by-email?email=" + req.getEmail();
+            // Consultar vía API Gateway (hostname del contenedor) configurable por env
+            String base = (apiGatewayBase != null && !apiGatewayBase.isBlank()) ? apiGatewayBase : "http://api-gateway:8080";
+            String url = base + "/users/by-email?email=" + req.getEmail();
             var resp = rt.getForEntity(url, Map.class);
             if (!resp.getStatusCode().is2xxSuccessful() || resp.getBody() == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Usuario no encontrado"));

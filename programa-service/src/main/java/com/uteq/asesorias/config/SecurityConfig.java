@@ -32,7 +32,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
             .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
             .requestMatchers("/actuator/**","/programas/ping").permitAll()
-            .requestMatchers(org.springframework.http.HttpMethod.POST, "/programas/**").hasAuthority("ADMINISTRADOR")
+            .requestMatchers(org.springframework.http.HttpMethod.GET, "/programas", "/programas/**").authenticated()
+            .requestMatchers(org.springframework.http.HttpMethod.POST, "/programas", "/programas/**").hasAuthority("ADMINISTRADOR")
+            .requestMatchers(org.springframework.http.HttpMethod.PUT, "/programas", "/programas/**").hasAuthority("ADMINISTRADOR")
+            .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/programas", "/programas/**").hasAuthority("ADMINISTRADOR")
+            .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/programas", "/programas/**").hasAuthority("ADMINISTRADOR")
             .anyRequest().authenticated());
         http.addFilterBefore(new JwtFilter(secret), UsernamePasswordAuthenticationFilter.class);
         return http.build();

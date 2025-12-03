@@ -35,10 +35,14 @@ public class SecurityConfig {
         http.formLogin(f -> f.disable());
         http.sessionManagement(sm -> sm.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/materias/ping").permitAll()
-                .anyRequest().authenticated()
+            .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers("/actuator/**", "/materias/ping").permitAll()
+            .requestMatchers(org.springframework.http.HttpMethod.GET, "/materias", "/materias/**").authenticated()
+            .requestMatchers(org.springframework.http.HttpMethod.POST, "/materias", "/materias/**").hasAuthority("ADMINISTRADOR")
+            .requestMatchers(org.springframework.http.HttpMethod.PUT, "/materias", "/materias/**").hasAuthority("ADMINISTRADOR")
+            .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/materias", "/materias/**").hasAuthority("ADMINISTRADOR")
+            .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/materias", "/materias/**").hasAuthority("ADMINISTRADOR")
+            .anyRequest().authenticated()
         );
         http.addFilterBefore(new JwtFilter(secret), UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -63,7 +67,7 @@ public class SecurityConfig {
                     var authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
                     var authToken = new UsernamePasswordAuthenticationToken(claims.getSubject(), null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    System.out.println("[materia-service] JWT parsed OK for subject: " + claims.getSubject());
+                    System.out.println("[materia-service] JWT parsed OK for subject: " + claims.getSubject() + ", roles=" + roles);
                 } catch (Exception ignored) {}
             } else {
                 System.out.println("[materia-service] No Authorization Bearer token on " + request.getMethod() + " " + request.getRequestURI());

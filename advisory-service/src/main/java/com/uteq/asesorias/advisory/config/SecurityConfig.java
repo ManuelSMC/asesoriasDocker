@@ -37,14 +37,18 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
             .requestMatchers("/actuator/**").permitAll()
             // Creation allowed to ALUMNO or PROFESOR
-            .requestMatchers(HttpMethod.POST, "/advisories").hasAnyAuthority("ALUMNO", "PROFESOR")
-                .requestMatchers(HttpMethod.PATCH, "/advisories/*").hasAnyAuthority("PROFESOR", "ADMINISTRADOR")
-                .requestMatchers(HttpMethod.POST, "/advisories/*/registrations").hasAuthority("ALUMNO")
-                .requestMatchers(HttpMethod.GET, "/advisories/*/registrations").authenticated()
-                .requestMatchers(HttpMethod.GET, "/advisories/registered/**").authenticated()
-                .requestMatchers(HttpMethod.PATCH, "/advisories/{id}/estado").hasAuthority("PROFESOR")
-                .requestMatchers(HttpMethod.POST, "/advisories/{id}/estado").hasAuthority("PROFESOR")
+            .requestMatchers(HttpMethod.POST, "/advisories", "/advisories/**").hasAnyAuthority("ALUMNO", "PROFESOR")
+            // Update advisory by id (PATCH on /advisories/{id} and specific estado endpoint)
+            .requestMatchers(HttpMethod.PATCH, "/advisories/*", "/advisories/*/estado").hasAnyAuthority("PROFESOR", "ADMINISTRADOR")
+            // Registrations
+            .requestMatchers(HttpMethod.POST, "/advisories/*/registrations").hasAuthority("ALUMNO")
+            .requestMatchers(HttpMethod.GET, "/advisories/*/registrations").authenticated()
+            .requestMatchers(HttpMethod.GET, "/advisories/registered/**").authenticated()
+            // Estado change may be POST or PATCH on /advisories/*/estado
+            .requestMatchers(HttpMethod.POST, "/advisories/*/estado").hasAuthority("PROFESOR")
+            // Reports
             .requestMatchers(HttpMethod.GET, "/advisories/reports/**").hasAuthority("COORDINADOR")
+            // Other gets
             .requestMatchers(HttpMethod.GET, "/advisories/**").authenticated()
             .anyRequest().authenticated()
         );

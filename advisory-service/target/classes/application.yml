@@ -5,9 +5,9 @@ spring:
   application:
     name: advisory-service
   datasource:
-    url: "jdbc:mysql://localhost:3306/asesorias_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
-    username: "root"
-    password: "Hola.123"
+    url: ${DB_URL:jdbc:mysql://mysql:3306/asesorias?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USER:root}
+    password: ${DB_PASS:Hola.123}
   jpa:
     hibernate:
       ddl-auto: update
@@ -23,9 +23,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: "http://localhost:8761/eureka/"
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka}
     register-with-eureka: true
     fetch-registry: true
+  instance:
+    prefer-ip-address: true
 feign:
   httpclient:
     enabled: true

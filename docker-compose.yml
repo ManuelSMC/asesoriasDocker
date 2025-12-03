@@ -1,0 +1,204 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: asesorias-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Hola.123
+      - MYSQL_DATABASE=asesorias
+    ports:
+      - "3307:3306"
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    image: asesorias/eureka-server:latest
+    container_name: eureka-server
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_INSTANCE_HOSTNAME=eureka-server
+    ports:
+      - "8761:8761"
+    depends_on:
+      - mysql
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    image: asesorias/api-gateway:latest
+    container_name: api-gateway
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    image: asesorias/auth-service:latest
+    container_name: auth-service
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - API_GATEWAY_BASE=http://api-gateway:8080
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/asesorias?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Hola.123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+      - eureka-server
+
+  division-service:
+    build:
+      context: ./division-service
+      dockerfile: Dockerfile
+    image: asesorias/division-service:latest
+    container_name: division-service
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/asesorias?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Hola.123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+      - eureka-server
+
+  programa-service:
+    build:
+      context: ./programa-service
+      dockerfile: Dockerfile
+    image: asesorias/programa-service:latest
+    container_name: programa-service
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/asesorias?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Hola.123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+      - eureka-server
+
+  materia-service:
+    build:
+      context: ./materia-service
+      dockerfile: Dockerfile
+    image: asesorias/materia-service:latest
+    container_name: materia-service
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/asesorias?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Hola.123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+      - eureka-server
+
+  profesor-service:
+    build:
+      context: ./profesor-service
+      dockerfile: Dockerfile
+    image: asesorias/profesor-service:latest
+    container_name: profesor-service
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/asesorias?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Hola.123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+      - eureka-server
+
+  notificacion-service:
+    build:
+      context: ./notificacion-service
+      dockerfile: Dockerfile
+    image: asesorias/notificacion-service:latest
+    container_name: notificacion-service
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/asesorias?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Hola.123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+      - eureka-server
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    image: asesorias/user-service:latest
+    container_name: user-service
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/asesorias?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Hola.123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+      - eureka-server
+
+  advisory-service:
+    build:
+      context: ./advisory-service
+      dockerfile: Dockerfile
+    image: asesorias/advisory-service:latest
+    container_name: advisory-service
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/asesorias?useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Hola.123
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql
+      - eureka-server
+  frontend-asesorias:
+    build:
+      context: ./frontend-asesorias/asesorias-web
+      dockerfile: Dockerfile
+    image: asesorias/frontend-asesorias:latest
+    container_name: frontend-asesorias
+    environment:
+      - API_BASE=http://localhost:8080
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+
+volumes:
+  db_data:
